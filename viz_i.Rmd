@@ -1,0 +1,223 @@
+---
+title: "Visualization"
+subtitle: "Part I"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggridges)
+
+```
+
+
+```{r, include = FALSE}
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USC00519397", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%
+  mutate(
+    name = recode(
+      id, 
+      USW00094728 = "CentralPark_NY", 
+      USC00519397 = "Waikiki_HA",
+      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>%
+  select(name, id, everything())
+
+weather_df
+```
+
+## Scatterplots
+Create a scatterplot
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point()
+
+```
+
+Name approach, same plot - using the " %>% " pipe function
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+```
+
+Save and edit plot object. 
+
+```{r}
+#saving my ggplot "frame" into an object I can then manipulate later on
+weather_plot = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax))
+
+#manipulating the ggplot object I created
+weather_plot + geom_point()
+```
+
+## Advanced scatterplot
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+
+## what about `aes` placement .. ?
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name)) + 
+  geom_smooth(se = T)
+```
+
+Let's facet some things! 
+
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, alpha = tmin, color = name)) + 
+  geom_point(alpha = .2) + 
+  geom_smooth(se = T) + 
+  facet_grid(. ~ name) 
+```
+
+Let's combine some elements and try a new plot.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point(aes(size = prcp), alpha = .5) + 
+  geom_smooth(se = F) + 
+  facet_grid(. ~ name)
+```
+
+
+## Some small notes 
+
+How many geoms do you need? You can have whatever geoms you want
+ 
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_smooth(se = T)
+```
+
+You can use a neat geom!
+
+```{r}
+#hexagons
+weather_df %>% 
+  ggplot(aes(x= tmin, y = tmax)) + 
+  geom_hex() 
+  
+#squares
+weather_df %>% 
+  ggplot(aes(x= tmin, y = tmax)) + 
+  geom_bin2d()
+
+#contours
+weather_df %>% 
+  ggplot(aes(x= tmin, y = tmax)) + 
+  geom_density2d() + 
+  geom_point(alpha = .3)
+```
+ 
+ 
+## Univariate Plots
+Where you have just one variable
+
+HISTOGRAMS
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin)) + 
+  geom_histogram() 
+```
+
+
+Can we add color to the ^ histogram ... ?
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, color = name)) + 
+  geom_histogram(position = "dodge")
+
+#color vs fill in aes()
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) + 
+  geom_histogram(position = "dodge")
+
+#faceting as opposed to having all 3 distbs in one plot
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) + 
+  geom_histogram() + 
+  facet_grid(. ~ name)
+
+
+```
+
+In the above histograms, it's quite hard to compare one histogram with another. 
+So, we're going to use a different geom to be able to compare multiple histograms of multiple variables
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) + 
+  geom_density(alpha = .3)
+
+#with `adjust`
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) + 
+  geom_density(alpha = .3, adjust = .5)
+
+```
+
+On `density` in `geom_density`
+You can think of density in `geom_density` as a histogram that has had it individual points smoothed out. 
+An argument FOR geom_density is that it makes it easier to compare histograms. 
+But note how you lost some information compared to geom_histogram, which give you a more detailed description of your histogram. You can try and address by passing the `adjsut = ` argument in the geom_density funciton.
+
+
+## Box Plots
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmin)) + 
+  geom_boxplot()
+```
+
+
+## Trendy plots
+Other univariate plots
+
+1st up - violin plots (nvm they don't quite look like violins)
+argument for `geom_violin` is tha they convey some more information, as a graphic, on the distribution. Taht's to say, it's easier to tell whether something is left skewed/right skewed/symmterical. 
+Think of violin plots as a cross between histograms and density plots. 
+Also note how violin plots are symmterical around the y-axis ... they're really just histograms that mirror eachother. 
+Argument against violin plot in contrast to box_plots is that they don't give you a direct info on, say, the median. But you can address this by adding whaterver statistics you need using `stat_summary(fun = "median")`
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmin, fill = name)) + 
+  geom_violin(alpha = .5) + 
+  stat_summary(fun = "median")
+```
+
+
+Trendy plots part II - Ridge Plots (most popular plot of 2017)
+
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = name, fill = name)) + 
+  geom_density_ridges()
+```
+
+
+
+
