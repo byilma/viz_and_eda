@@ -135,4 +135,64 @@ weather_df %>%
 ```
 
 
+## General summaries
+
+computing in the different months, the average tmax ... and a couple more summaries 
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(
+    mean_tmax = mean(tmax, na.rm = T), #first define your variable name (mean_tmax) and then define what you want to go into that summary variable
+    mean_prcp = mean(prcp, na.rm = T),
+    median_tmin = median(tmin, na.rm = T)
+  )
+```
+
+
+This is a dataframe! SO I'm going to make graphs off of it
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(
+    mean_tmax = mean(tmax, na.rm = T),
+    mean_prcp = mean(prcp, na.rm = T),
+    median_tmin = median(tmin, na.rm = T)
+  ) %>% 
+  ggplot(aes(x = month, y = mean_tmax, color = name)) +
+  geom_point() + 
+  geom_line()
+
+#compare this with a non-summarized plot version of the same data: 
+
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point() + 
+  geom_line()
+```
+
+
+The point ^ from this above chunk is that you can do group_by then summarize and then make a plot off of it
+
+
+**Now, Suppose you want to summarize many columns.**
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(across(prcp:tmin, mean)) #computing the mean of all the variables starting from the prcp variables TO [:] tmin
+```
+
+
+Reminder: sometimes your results are easier to read in another format. 
+
+peep the `knitr::kable` function, which outputs a nice table output when you knit your Rmd to an md
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(mean_tmax = mean(tmax)) %>% 
+  pivot_wider(
+    names_from = name,
+    values_from = mean_tmax
+  ) %>% 
+  knitr::kable(digits = 1)
+```
 
