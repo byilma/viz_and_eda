@@ -78,7 +78,7 @@ weather_df %>%
 ```
 
 
-**Never** use base R's `table` function
+**Never** use base R's `table` function.
 Reason:
 1 - outputs are not in a dataframe (it's a vector) 
 2 - to get to the `table` function, we had to `pull` a variable out of a df 
@@ -87,6 +87,22 @@ weather_df %>%
   pull(month) %>% 
   table()
 ```
+
+
+
+Other helpful counters
+
+```{r}
+weather_df %>% 
+  group_by(month) %>% 
+  summarize(
+    n_obs = n(), 
+    n_days = n_distinct(date) #n_distinct here is looking at all the dates in a given month (what  you grouped by)
+    )
+
+
+```
+
 
 
 
