@@ -202,8 +202,50 @@ ggplot(data = waikiki, aes(x = date, y = tmax, color = name)) +
   geom_line(data = central_park)
 ```
 
+## `patchwork`
+
+Recall faceting ... 
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) + 
+  geom_density(alpha = .5) + 
+  facet_grid(. ~ name)
+
+```
 
 
+But what if we wanted to plot two different types of plots side by side and can't facet? 
+BOOM - `faceting`
 
+## patchwork in practice
+```{r}
+tmax_tmin_plot = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) + 
+  theme(legend.position = "none")
+
+prcp_dens_plot = 
+  weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, fill = name)) +
+  geom_density(alpha = .5) + 
+  theme(legend.position = "none")
+
+tmax_date_plot = 
+  weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE) + 
+  theme(legend.position = "none")
+
+
+# tmax_tmin_plot + prcp_dens_plot + tmax_date_plot
+# tmax_tmin_plot + (prcp_dens_plot + tmax_date_plot)
+# tmax_tmin_plot / (prcp_dens_plot + tmax_date_plot)
+(tmax_tmin_plot + prcp_dens_plot) / (tmax_date_plot)
+
+```
 
 

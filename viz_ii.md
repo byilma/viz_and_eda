@@ -203,3 +203,61 @@ ggplot(data = waikiki, aes(x = date, y = tmax, color = name)) +
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
 ![](viz_ii_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+## `patchwork`
+
+Recall faceting …
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) + 
+  geom_density(alpha = .5) + 
+  facet_grid(. ~ name)
+```
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_density).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+But what if we wanted to plot two different types of plots side by side
+and can’t facet? BOOM - `faceting`
+
+## patchwork in practice
+
+``` r
+tmax_tmin_plot = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) + 
+  theme(legend.position = "none")
+
+prcp_dens_plot = 
+  weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, fill = name)) +
+  geom_density(alpha = .5) + 
+  theme(legend.position = "none")
+
+tmax_date_plot = 
+  weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE) + 
+  theme(legend.position = "none")
+
+
+# tmax_tmin_plot + prcp_dens_plot + tmax_date_plot
+# tmax_tmin_plot + (prcp_dens_plot + tmax_date_plot)
+# tmax_tmin_plot / (prcp_dens_plot + tmax_date_plot)
+(tmax_tmin_plot + prcp_dens_plot) / (tmax_date_plot)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
