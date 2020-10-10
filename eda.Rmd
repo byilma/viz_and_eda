@@ -184,7 +184,7 @@ weather_df %>%
 
 Reminder: sometimes your results are easier to read in another format. 
 
-peep the `knitr::kable` function, which outputs a nice table output when you knit your Rmd to an md
+*Peep* the `knitr::kable` function, which outputs a nice table output when you knit your Rmd to an md
 ```{r}
 weather_df %>% 
   group_by(name, month) %>% 
@@ -195,4 +195,50 @@ weather_df %>%
   ) %>% 
   knitr::kable(digits = 1)
 ```
+
+
+## `group_by` and `mutate`
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    centered_tmax = tmax - mean_tmax #a centered t_max ... which is tmax - mean of tmax
+  ) %>% 
+  ggplot(aes(x = date, y = centered_tmax, color = name)) + 
+  geom_point() # here each data point is centered around zero
+
+#note how the weather_df is still the same size ... you're just adding the same mean_tmax for every obs in a given month (which is what you grouped by)
+```
+
+
+
+## Window Functions
+
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  mutate(
+    temp_rank = min_rank (tmax)) %>% #ranking the temperatures according to their max temperatures
+    #temp_rank = min_rank (desc(tmax))  #"descending" tmax
+    filter(temp_rank == 1) #this filter by gives us the coldest day in each of the 3 places, by month
+```
+
+
+`lag`
+
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    temp_change = tmax - lag(tmax)) %>% 
+    summarize(
+      temp_change_max = max(temp_change, na.rm = TRUE),
+      temp_change_sd = sd(temp_change, na.rm = TRUE)
+    )
+##largest temperture change in a day by place
+
+```
+
 
