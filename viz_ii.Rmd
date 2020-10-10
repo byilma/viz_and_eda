@@ -245,7 +245,40 @@ tmax_date_plot =
 # tmax_tmin_plot + (prcp_dens_plot + tmax_date_plot)
 # tmax_tmin_plot / (prcp_dens_plot + tmax_date_plot)
 (tmax_tmin_plot + prcp_dens_plot) / (tmax_date_plot)
-
 ```
+
+
+
+## Data Manipulation 
+
+Control your factors to control how your categorical variables appear in your plots
+```{r}
+weather_df %>%
+  mutate(
+    name = factor(name), 
+    name = forcats::fct_relevel(name, c("Waikiki_HA"))
+  ) %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) + 
+  geom_violin(alpha = .5) + 
+  stat_summary()
+```
+
+
+What if I wanted densities for tmin and tmax simultanneously? 
+```{r}
+weather_df %>% 
+  pivot_longer(
+    tmax:tmin, 
+    names_to = "observation",
+    values_to = "temperature"
+  ) %>% 
+  ggplot(aes(x = temperature, fill = observation)) + 
+  geom_density(alpha = .5) + 
+  facet_grid(. ~ name)
+  
+## what we get here is a temp distb for tmin vs. tmax 
+```
+
+
 
 
