@@ -313,3 +313,76 @@ weather_df %>%
     ## Warning: Removed 15 rows containing non-finite values (stat_density_ridges).
 
 ![](viz_i_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+## SAVE & EMBED
+
+Let’s save a scatterplot.
+
+``` r
+weather_plot = weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) + 
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
+
+weather_plot
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_i_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+ggsave("./plots/weather_plot.jpg", weather_plot, width = 8 , height = 5)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_smooth).
+    
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+What about embeddig … ? i.e., can we control what a figure will end up
+looking like in your knitted md?
+
+``` r
+weather_plot
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_i_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+embedding using chunk options (at different size)
+
+``` r
+weather_plot
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_i_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+``` r
+weather_plot
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_i_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->

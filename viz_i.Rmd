@@ -219,5 +219,39 @@ weather_df %>%
 ```
 
 
+## SAVE & EMBED
+
+Let's save a scatterplot. 
+
+```{r}
+weather_plot = weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) + 
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
+
+weather_plot
+
+ggsave("./plots/weather_plot.jpg", weather_plot, width = 8 , height = 5)
+```
+
+What about embeddig ... ? i.e., can we control what a figure will end up looking like in your knitted md? 
+
+```{r}
+weather_plot
+```
+
+
+embedding using chunk options (at different size)
+```{r, fig.width=12, fig.height=6}
+weather_plot
+```
+
+```{r, fig.width=6, fig.height=3}
+weather_plot
+```
+
+
+
 
 
