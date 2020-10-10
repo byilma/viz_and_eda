@@ -99,10 +99,40 @@ weather_df %>%
     n_obs = n(), 
     n_days = n_distinct(date) #n_distinct here is looking at all the dates in a given month (what  you grouped by)
     )
-
-
 ```
 
+
+## A digression on 2x2 tables
+
+```{r}
+weather_df %>% 
+  filter(name != "Waikiki_HA") %>% 
+  mutate(
+    cold = case_when(
+      tmax < 5 ~ "cold", 
+      tmax >= 5 ~ "not cold", 
+      TRUE  ~ ""
+    )
+  ) %>% 
+  group_by(name, cold) %>% 
+  summarize(count = n()) 
+```
+
+
+using `janitor::tabyl()` to make a 2x2 table given group_by + summarize-d output
+
+```{r}
+weather_df %>% 
+  filter(name != "Waikiki_HA") %>% 
+  mutate(
+    cold = case_when(
+      tmax < 5 ~ "cold", 
+      tmax >= 5 ~ "not cold", 
+      TRUE  ~ ""
+    )
+  ) %>% 
+  janitor::tabyl(name, cold) #making a 2x2 the easy way (or whatever by whatever table)
+```
 
 
 
