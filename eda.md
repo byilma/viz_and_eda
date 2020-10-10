@@ -27,3 +27,64 @@ weather_df %>%
     ##  9 CentralPark_NY USW00094728 2017-01-09     0  -4.9  -9.9 2017-01-01
     ## 10 CentralPark_NY USW00094728 2017-01-10     0   7.8  -6   2017-01-01
     ## # … with 1,085 more rows
+
+## counting things
+
+count month observations
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(n_obs = n())
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+    ## # A tibble: 36 x 3
+    ## # Groups:   name [3]
+    ##    name           month      n_obs
+    ##    <chr>          <date>     <int>
+    ##  1 CentralPark_NY 2017-01-01    31
+    ##  2 CentralPark_NY 2017-02-01    28
+    ##  3 CentralPark_NY 2017-03-01    31
+    ##  4 CentralPark_NY 2017-04-01    30
+    ##  5 CentralPark_NY 2017-05-01    31
+    ##  6 CentralPark_NY 2017-06-01    30
+    ##  7 CentralPark_NY 2017-07-01    31
+    ##  8 CentralPark_NY 2017-08-01    31
+    ##  9 CentralPark_NY 2017-09-01    30
+    ## 10 CentralPark_NY 2017-10-01    31
+    ## # … with 26 more rows
+
+we can use `count` as well (kinda synonymous with group\_by if you’re
+using group\_by + summarize() just for counting)
+
+``` r
+weather_df %>% 
+  count(name, month, name = "n_obs")
+```
+
+    ## # A tibble: 36 x 3
+    ##    name           month      n_obs
+    ##    <chr>          <date>     <int>
+    ##  1 CentralPark_NY 2017-01-01    31
+    ##  2 CentralPark_NY 2017-02-01    28
+    ##  3 CentralPark_NY 2017-03-01    31
+    ##  4 CentralPark_NY 2017-04-01    30
+    ##  5 CentralPark_NY 2017-05-01    31
+    ##  6 CentralPark_NY 2017-06-01    30
+    ##  7 CentralPark_NY 2017-07-01    31
+    ##  8 CentralPark_NY 2017-08-01    31
+    ##  9 CentralPark_NY 2017-09-01    30
+    ## 10 CentralPark_NY 2017-10-01    31
+    ## # … with 26 more rows
+
+**Never** use base R’s `table` function Reason: 1 - outputs are not in a
+dataframe (it’s a vector) 2 - to get to the `table` function, we had to
+`pull` a variable out of a df
+
+``` r
+weather_df %>% 
+  pull(month) %>% 
+  table()
+```
