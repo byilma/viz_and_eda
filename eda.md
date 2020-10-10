@@ -365,3 +365,9 @@ weather_df %>%
 ``` r
 ##largest temperture change in a day by place
 ```
+
+## Quick note:
+
+Summarize only gets you so far. It’s good at getting you single number
+summaries like mean/median/sd but it’s not too hot when it comes to more
+complicated EDA like regression of a given Y on X by z number of groups
